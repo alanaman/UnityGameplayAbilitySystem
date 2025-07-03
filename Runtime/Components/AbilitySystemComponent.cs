@@ -22,7 +22,7 @@ namespace H2V.GameplayAbilitySystem.Components
     [RequireComponent(typeof(AttributeSystemBehaviour))]
     public class AbilitySystemComponent : MonoBehaviour
     {
-        [field: SerializeField] public TagSystemBehaviour TagSystem { get; private set; }
+        [field: SerializeField] public GameplayTagComponent GameplayGameplayTags { get; private set; }
         [field: SerializeField] public AbilitySystemBehaviour AbilitySystem { get; private set; }
         [field: SerializeField] public AttributeSystemBehaviour AttributeSystem { get; private set; }
         [field: SerializeField] public EffectSystemBehaviour GameplayEffectSystem { get; private set; }
@@ -33,7 +33,7 @@ namespace H2V.GameplayAbilitySystem.Components
 
         private void OnValidate()
         {
-            if (!TagSystem) TagSystem = gameObject.GetComponent<TagSystemBehaviour>();
+            if (!GameplayGameplayTags) GameplayGameplayTags = gameObject.GetComponent<GameplayTagComponent>();
             if (!AbilitySystem) AbilitySystem = gameObject.GetComponent<AbilitySystemBehaviour>();
             if (!AttributeSystem) AttributeSystem = gameObject.GetComponent<AttributeSystemBehaviour>();
             if (!GameplayEffectSystem) GameplayEffectSystem = gameObject.GetComponent<EffectSystemBehaviour>();

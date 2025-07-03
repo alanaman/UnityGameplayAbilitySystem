@@ -1,6 +1,6 @@
 using System;
 using H2V.GameplayAbilitySystem.Components;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEngine;
 
 namespace H2V.GameplayAbilitySystem.EffectSystem.AdditionApplyEffects
@@ -13,7 +13,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.AdditionApplyEffects
         /// will be removed from the Target when this GameplayEffect is successfully applied.
         /// </summary>
         [field: SerializeField]
-        public TagSO[] Tags { get; private set; } = Array.Empty<TagSO>();
+        public GameplayTagSO[] Tags { get; private set; } = Array.Empty<GameplayTagSO>();
 
         public void OnEffectSpecApplied(AbilitySystemComponent target)
         {

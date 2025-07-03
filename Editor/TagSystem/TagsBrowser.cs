@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using H2V.ExtensionsCore.Editor.Helpers;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -12,35 +12,33 @@ namespace H2V.GameplayAbilitySystem.Editor.TagSystem
     public class TagsBrowser : EditorWindow
     {
         private static TagsBrowser _window;
-        private static List<TagSO> _allTags;
 
         private static TreeViewState _treeViewState;
         private static TagsTreeView _tagTreeView;
         private SearchField _searchField;
 
         private Vector2 _scrollPosition;
-        private static string _directoryToAdd = "ScriptableObjects/Tags";
-
-        private CommonTags _commonTags;
-
+        private string _newTag = "";
+        
         private void OnEnable()
         {
-            FetchTags();
+            CreateTreeView();
         }
 
-        [MenuItem("Window/H2V/Gameplay Ability System/Tags Browser %#T")]
+        [MenuItem("Window/Gameplay Ability System/Tags Browser %#T")]
         public static void ShowWindow()
         {
             _window = GetWindow<TagsBrowser>($"Tags Browser");
+            _tagTreeView.Reload();
             _window.Show();
         }
 
         private void OnGUI()
         {
+            AddTagSection();
             EditorGUILayout.Space();
             TagsTreeSection();
             EditorGUILayout.Space();
-            AddTagSection();
         }
 
         private void TagsTreeSection()
@@ -60,22 +58,20 @@ namespace H2V.GameplayAbilitySystem.Editor.TagSystem
 
         private void AddTagSection()
         {
-            _directoryToAdd = EditorGUILayout.TextField("Directory to add:", _directoryToAdd);
-            var directory = $"Assets/{_directoryToAdd}";
             EditorGUILayout.Space();
-            if (_commonTags == null)
+            _newTag = EditorGUILayout.TextField("New Tag:", _newTag);
+            if (GUILayout.Button("Add new Tag"))
             {
-                if (GUILayout.Button("Create common tags"))
-                    _commonTags = AddNewSO<CommonTags>(directory, "CommonTags");
-                return;
-            }
-            if (GUILayout.Button("Add new tag"))
-            {
-                var assetInFolder = AssetFinder.FindAssetsWithType<TagSO>("", directory);
-                AddNewSO<TagSO>(directory, $"NewTag{assetInFolder.Count()}");
+                TryAddNewTag();
+                _tagTreeView.Reload();
             }
         }
-
+        private void TryAddNewTag()
+        {
+            if (string.IsNullOrWhiteSpace(_newTag)) return;
+            GameplayTagConfig.instance.AddTag(_newTag);
+            _newTag = "";
+        }
         private T AddNewSO<T>(string directory, string name) where T : ScriptableObject
         {
             var newAsset = ScriptableObject.CreateInstance<T>();
@@ -89,29 +85,20 @@ namespace H2V.GameplayAbilitySystem.Editor.TagSystem
             return newAsset;
         }
 
-        private void FetchTags()
+        private void CreateTreeView()
         {
-            _allTags = AssetDatabase.FindAssets("t:TagSO")
-                .Select(AssetDatabase.GUIDToAssetPath)
-                .Select(AssetDatabase.LoadAssetAtPath<TagSO>)
-                .ToList();
-            _commonTags = AssetFinder.FindAssetsWithType<CommonTags>().FirstOrDefault();
-            _tagTreeView = null;
-
-            if (_commonTags == null || _allTags.Count <= 0) return;
-
             _treeViewState ??= new TreeViewState ();
-            _tagTreeView = new TagsTreeView(_treeViewState, _allTags);
+            _tagTreeView = new TagsTreeView(_treeViewState);
         }
 
         private void OnFocus()
         {
-            FetchTags();
+            CreateTreeView();
         }
 
         private void OnProjectChange()
         {
-            FetchTags();
+            CreateTreeView();
         }
     }
 }

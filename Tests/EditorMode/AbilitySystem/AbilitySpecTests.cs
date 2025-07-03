@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using H2V.GameplayAbilitySystem.AbilitySystem.Components;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEditor;
 using H2V.ExtensionsCore.Editor.Helpers;
 using H2V.GameplayAbilitySystem.AbilitySystem;
@@ -14,11 +14,11 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         private AbilitySystemBehaviour _otherAbilitySystem;
         private TestAbility _testAbility;
         private TestAbility _otherTestAbility;
-        private TagSO _requiredTag;
-        private TagSO _ignoreTag;
-        private TagSO _activationTag;
-        private TagSO _blockTag;
-        private TagSO _cancelTag;
+        private GameplayTagSO _requiredGameplayTag;
+        private GameplayTagSO _ignoreGameplayTag;
+        private GameplayTagSO _activationGameplayTag;
+        private GameplayTagSO _blockGameplayTag;
+        private GameplayTagSO _cancelGameplayTag;
 
         [SetUp]
         public void SetUp()
@@ -31,19 +31,19 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
             _testAbility = ScriptableObject.CreateInstance<TestAbility>();
             _otherTestAbility = ScriptableObject.CreateInstance<TestAbility>();
 
-            _requiredTag = ScriptableObject.CreateInstance<TagSO>();
-            _ignoreTag = ScriptableObject.CreateInstance<TagSO>();
-            _activationTag = ScriptableObject.CreateInstance<TagSO>();
-            _blockTag = ScriptableObject.CreateInstance<TagSO>();
-            _cancelTag = ScriptableObject.CreateInstance<TagSO>();
+            _requiredGameplayTag = ScriptableObject.CreateInstance<GameplayTagSO>();
+            _ignoreGameplayTag = ScriptableObject.CreateInstance<GameplayTagSO>();
+            _activationGameplayTag = ScriptableObject.CreateInstance<GameplayTagSO>();
+            _blockGameplayTag = ScriptableObject.CreateInstance<GameplayTagSO>();
+            _cancelGameplayTag = ScriptableObject.CreateInstance<GameplayTagSO>();
         }
 
-        private void AddTagToList(ref TagSO[] listToAdd, params TagSO[] tags)
+        private void AddTagToList(ref GameplayTagSO[] listToAdd, params GameplayTagSO[] tags)
         {
             ArrayUtility.AddRange(ref listToAdd, tags);
         }
 
-        private void RemoveTagFromList(ref TagSO[] listToAdd, params TagSO[] tags)
+        private void RemoveTagFromList(ref GameplayTagSO[] listToAdd, params GameplayTagSO[] tags)
         {
             foreach (var tag in tags)
             {
@@ -96,15 +96,15 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         {
             // In this test Source is the same as Owner so I only test Owner
             var abilitySpec = _abilitySystem.GiveAbility<TestAbilitySpec>(_testAbility);
-            AddTagToList(ref _testAbility.Tags.OwnerTags.RequireTags, _requiredTag);
+            AddTagToList(ref _testAbility.Tags.OwnerTags.RequireTags, _requiredGameplayTag);
             Assert.IsFalse(abilitySpec.CanActiveAbility());
-            _abilitySystem.TagSystem.AddTags(_requiredTag);
+            _abilitySystem.GameplayGameplayTags.AddTags(_requiredGameplayTag);
             Assert.IsTrue(abilitySpec.CanActiveAbility());
 
-            AddTagToList(ref _testAbility.Tags.OwnerTags.IgnoreTags, _ignoreTag);
-            _abilitySystem.TagSystem.AddTags(_ignoreTag);
+            AddTagToList(ref _testAbility.Tags.OwnerTags.IgnoreTags, _ignoreGameplayTag);
+            _abilitySystem.GameplayGameplayTags.AddTags(_ignoreGameplayTag);
             Assert.IsFalse(abilitySpec.CanActiveAbility());
-            _abilitySystem.TagSystem.RemoveTags(_ignoreTag);
+            _abilitySystem.GameplayGameplayTags.RemoveTags(_ignoreGameplayTag);
             Assert.IsTrue(abilitySpec.CanActiveAbility());
         }
 
@@ -124,8 +124,8 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         [Test]
         public void CanActiveAbility_IsBlockedByOtherAbility()
         {
-            AddTagToList(ref _otherTestAbility.Tags.BlockAbilityWithTags, _blockTag);
-            _testAbility.Tags.AbilityTag = _blockTag;
+            AddTagToList(ref _otherTestAbility.Tags.BlockAbilityWithTags, _blockGameplayTag);
+            _testAbility.Tags.abilityGameplayTag = _blockGameplayTag;
 
             var abilitySpec = _abilitySystem.GiveAbility<TestAbilitySpec>(_testAbility);
             var blockAbilitySpec = _abilitySystem.GiveAbility<TestAbilitySpec>(_otherTestAbility);
@@ -139,11 +139,11 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         public void ActivateAbility_AbilityActive_SystemHasActivationTags()
         {
             var abilitySpec = _abilitySystem.GiveAbility<TestAbilitySpec>(_testAbility);
-            AddTagToList(ref _testAbility.Tags.ActivationTags, _activationTag);
+            AddTagToList(ref _testAbility.Tags.ActivationTags, _activationGameplayTag);
             _abilitySystem.TryActiveAbility(abilitySpec);
             Assert.IsTrue(abilitySpec.IsActive);
 
-            Assert.IsTrue(_abilitySystem.TagSystem.HasTag(_activationTag));
+            Assert.IsTrue(_abilitySystem.GameplayGameplayTags.TagSet.HasTag(_activationGameplayTag));
         }
 
         [Test]
@@ -151,12 +151,12 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         {
 
             var abilitySpec = _abilitySystem.GiveAbility<TestAbilitySpec>(_testAbility);
-            AddTagToList(ref _testAbility.Tags.TargetTags.RequireTags, _requiredTag);
+            AddTagToList(ref _testAbility.Tags.TargetTags.RequireTags, _requiredGameplayTag);
 
             _abilitySystem.TryActiveAbility(abilitySpec, _otherAbilitySystem);
             Assert.AreEqual(0, abilitySpec.Targets.Count);
 
-            _otherAbilitySystem.TagSystem.AddTags(_requiredTag);
+            _otherAbilitySystem.GameplayGameplayTags.AddTags(_requiredGameplayTag);
 
             _abilitySystem.TryActiveAbility(abilitySpec, _otherAbilitySystem);
 
@@ -166,8 +166,8 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
         [Test]
         public void ActivateAbility_CancelTargetsAbilities()
         {
-            _otherTestAbility.Tags.AbilityTag = _cancelTag;
-            AddTagToList(ref _testAbility.Tags.CancelAbilityWithTags, _cancelTag);
+            _otherTestAbility.Tags.abilityGameplayTag = _cancelGameplayTag;
+            AddTagToList(ref _testAbility.Tags.CancelAbilityWithTags, _cancelGameplayTag);
 
             var otherAbilitySpec = _otherAbilitySystem.GiveAbility<TestAbilitySpec>(_otherTestAbility);
             _otherAbilitySystem.TryActiveAbility(otherAbilitySpec);
@@ -185,7 +185,7 @@ namespace H2V.GameplayAbilitySystem.Tests.AbilitySystem
             var abilitySpec = _abilitySystem.GrantedAbilities[0];
             abilitySpec.EndAbility();
             Assert.IsFalse(abilitySpec.IsActive);
-            Assert.IsFalse(_abilitySystem.TagSystem.HasTag(_activationTag));
+            Assert.IsFalse(_abilitySystem.GameplayGameplayTags.TagSet.HasTag(_activationGameplayTag));
         }
 
 

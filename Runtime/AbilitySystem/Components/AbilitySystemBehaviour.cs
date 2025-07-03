@@ -16,7 +16,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem.Components
 
         [SerializeField] private AbilitySystemComponent _abilitySystemComponent;
         public AbilitySystemComponent AbilitySystemComponent => _abilitySystemComponent;
-        public TagSystemBehaviour TagSystem => _abilitySystemComponent.TagSystem;
+        public GameplayTagComponent GameplayGameplayTags => _abilitySystemComponent.GameplayGameplayTags;
 
         private List<AbilitySpec> _grantedAbilities = new();
         public IReadOnlyList<AbilitySpec> GrantedAbilities => _grantedAbilities;

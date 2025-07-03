@@ -2,7 +2,7 @@ using System;
 using H2V.GameplayAbilitySystem.Components;
 using H2V.GameplayAbilitySystem.EffectSystem.Utilities;
 using H2V.GameplayAbilitySystem.EffectSystem.ScriptableObjects;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEngine;
 
 namespace H2V.GameplayAbilitySystem.EffectSystem
@@ -45,7 +45,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem
         /// Which Data/SO the effect is based on
         /// </summary>
         [field: SerializeField] public IGameplayEffectDef EffectDef { get; private set; }
-        public TagSO EffectTag => EffectDef.EffectTag;
+        public GameplayTagSO EffectGameplayTag => EffectDef.EffectGameplayTag;
 
         public StackingDetails StackingDetails => EffectDef.StackingDetails;
 

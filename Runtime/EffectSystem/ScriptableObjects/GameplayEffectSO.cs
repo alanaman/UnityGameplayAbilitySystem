@@ -3,7 +3,7 @@ using H2V.GameplayAbilitySystem.Components;
 using H2V.GameplayAbilitySystem.EffectSystem.AdditionApplyEffects;
 using H2V.GameplayAbilitySystem.EffectSystem.EffectConditions;
 using H2V.GameplayAbilitySystem.EffectSystem.GamplayEffectPolicies;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEngine;
 
 namespace H2V.GameplayAbilitySystem.EffectSystem.ScriptableObjects
@@ -17,7 +17,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.ScriptableObjects
         public string Description { get; private set; }
 
         [field: SerializeField, Tooltip("Tag to define this effect")]
-        public TagSO EffectTag { get; private set; }
+        public GameplayTagSO EffectGameplayTag { get; private set; }
 
         /// <summary>
         /// How this effect will be applied to target

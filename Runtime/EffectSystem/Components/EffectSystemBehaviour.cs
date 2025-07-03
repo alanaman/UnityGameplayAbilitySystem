@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using H2V.GameplayAbilitySystem.AttributeSystem.Components;
 using H2V.GameplayAbilitySystem.Components;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using IndiGames.GameplayAbilitySystem.EffectSystem.Components;
 using UnityEngine;
 
@@ -60,18 +60,18 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Components
             instigator.GameplayEffectSystem.AppliedEffectToTarget?.Invoke(Owner, spec);
         }
 
-        public void ExpireEffectWithTagImmediately(TagSO tag)
+        public void ExpireEffectWithTagImmediately(GameplayTagSO gameplayTag)
         {
-            ExpireEffectWithTag(tag);
+            ExpireEffectWithTag(gameplayTag);
             UpdateAttributeModifiersUsingAppliedEffects();
         }
 
-        public void ExpireEffectWithTag(TagSO tag)
+        public void ExpireEffectWithTag(GameplayTagSO gameplayTag)
         {
             foreach (var appliedEffect in _appliedEffects)
             {
                 if (appliedEffect.Expired) continue;
-                if (!appliedEffect.EffectTag == tag) continue;
+                if (!appliedEffect.EffectGameplayTag == gameplayTag) continue;
                 appliedEffect.IsActive = false;
             }
         }

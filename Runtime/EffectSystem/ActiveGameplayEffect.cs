@@ -7,7 +7,7 @@ using H2V.GameplayAbilitySystem.AttributeSystem.ScriptableObjects;
 using H2V.GameplayAbilitySystem.Components;
 using H2V.GameplayAbilitySystem.EffectSystem.Components;
 using H2V.GameplayAbilitySystem.EffectSystem.ScriptableObjects;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 using UnityEngine;
 
 namespace H2V.GameplayAbilitySystem.EffectSystem
@@ -38,7 +38,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem
         public bool IsActive { get; set; } = true;
         public bool Expired => _spec == null || _spec.IsExpired || IsActive == false;
 
-        public TagSO EffectTag => _spec.EffectTag;
+        public GameplayTagSO EffectGameplayTag => _spec.EffectGameplayTag;
 
 
         /// <summary>

@@ -4,7 +4,7 @@ using H2V.GameplayAbilitySystem.EffectSystem.AdditionApplyEffects;
 using H2V.GameplayAbilitySystem.EffectSystem.EffectConditions;
 using H2V.GameplayAbilitySystem.EffectSystem.GamplayEffectPolicies;
 using H2V.GameplayAbilitySystem.EffectSystem.ScriptableObjects;
-using H2V.GameplayAbilitySystem.TagSystem.ScriptableObjects;
+using H2V.GameplayAbilitySystem.TagSystem;
 
 namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
 {
@@ -14,7 +14,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
     public class GameplayEffectDefBuilder
     {
         private string _name;
-        private TagSO _effectTag;
+        private GameplayTagSO _effectGameplayTag;
         private IGameplayEffectPolicy _policy = new InstantPolicy();
         private EffectDetails _effectDetails = new();
         private StackingDetails _stackingDetails = new();
@@ -28,9 +28,9 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
             return this;
         }
 
-        public GameplayEffectDefBuilder WithEffectTag(TagSO effectTag)
+        public GameplayEffectDefBuilder WithEffectTag(GameplayTagSO effectGameplayTag)
         {
-            _effectTag = effectTag;
+            _effectGameplayTag = effectGameplayTag;
             return this;
         }
 
@@ -74,7 +74,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
 
         public GameplayEffectDef Build()
         {
-            var effect = new GameplayEffectDef(_name, _effectTag, _policy, 
+            var effect = new GameplayEffectDef(_name, _effectGameplayTag, _policy, 
                 _effectDetails, _stackingDetails);
             effect.SetAdditionApplyEffects(_additionApplyEffects.ToArray());
             effect.SetCustomExecutions(_customExecutions.ToArray());
@@ -87,7 +87,7 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
     {
         public string Name { get; private set; }
 
-        public TagSO EffectTag { get; private set; }
+        public GameplayTagSO EffectGameplayTag { get; private set; }
 
         public IGameplayEffectPolicy Policy { get; private set; }
 
@@ -111,11 +111,11 @@ namespace H2V.GameplayAbilitySystem.EffectSystem.Utilities
             return effect;
         }
 
-        public GameplayEffectDef(string name, TagSO effectTag, IGameplayEffectPolicy policy,
+        public GameplayEffectDef(string name, GameplayTagSO effectGameplayTag, IGameplayEffectPolicy policy,
             EffectDetails effectDetails, StackingDetails stackingDetails)
         {
             Name = name;
-            EffectTag = effectTag;
+            EffectGameplayTag = effectGameplayTag;
             Policy = policy;
             EffectDetails = effectDetails;
             StackingDetails = stackingDetails;

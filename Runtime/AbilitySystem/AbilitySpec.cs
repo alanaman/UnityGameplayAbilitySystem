@@ -90,8 +90,8 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
         /// </summary>
         protected virtual bool DoesSystemsSatisfyTagRequirements()
         {
-            return _owner.IsSatisfyTagRequirements(_abilityDef.Tags.OwnerTags) &&
-                Source.IsSatisfyTagRequirements(_abilityDef.Tags.SourceTags);
+            return _owner.DoesSystemSatisfyTagRequirements(_abilityDef.Tags.OwnerTags) &&
+                Source.DoesSystemSatisfyTagRequirements(_abilityDef.Tags.SourceTags);
         }
         
         protected virtual bool IsPassAllCondition()
@@ -110,7 +110,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
             foreach (var abilitySpec in Owner.GrantedAbilities)
             {
                 var blockTags = abilitySpec.AbilityDef.Tags.BlockAbilityWithTags;
-                if (blockTags.Contains(_abilityDef.Tags.AbilityTag))
+                if (blockTags.Contains(_abilityDef.Tags.abilityGameplayTag))
                     return true;
             }
             return false;
@@ -123,7 +123,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
         public void ActivateAbility()
         {
             InternalActiveAbility();
-            _owner.TagSystem.AddTags(_abilityDef.Tags.ActivationTags);
+            _owner.GameplayGameplayTags.AddTags(_abilityDef.Tags.ActivationTags);
         }
 
         private void InternalActiveAbility()
@@ -147,7 +147,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
                 var cancelTags = _abilityDef.Tags.CancelAbilityWithTags;
                 foreach (var abilitySpec in target.GrantedAbilities)
                 {
-                    if (cancelTags.Contains(abilitySpec.AbilityDef.Tags.AbilityTag))
+                    if (cancelTags.Contains(abilitySpec.AbilityDef.Tags.abilityGameplayTag))
                         abilitySpec.EndAbility();
                 }
             } 
@@ -157,7 +157,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
         {
             Targets.RemoveWhere(target => 
             {
-                if (!target.IsSatisfyTagRequirements(_abilityDef.Tags.TargetTags))
+                if (!target.DoesSystemSatisfyTagRequirements(_abilityDef.Tags.TargetTags))
                     return true;
                 return false;
             });
@@ -172,7 +172,7 @@ namespace H2V.GameplayAbilitySystem.AbilitySystem
             if (!_isActive || _owner == null) return;
 
             _isActive = false;
-            _owner.TagSystem.RemoveTags(_abilityDef.Tags.ActivationTags);
+            _owner.GameplayGameplayTags.RemoveTags(_abilityDef.Tags.ActivationTags);
             Targets.Clear();
             OnAbilityEnded();
         }
